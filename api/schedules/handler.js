@@ -1,5 +1,6 @@
 'use strict';
 const createSchedule = require('./controllers/create-schedule.js');
+const snsPublish = require('aws-sns-publish');
 
 module.exports.create = (event, context, callback) => {
 
@@ -15,6 +16,13 @@ module.exports.create = (event, context, callback) => {
       response.body = error;
       callback(response);
     }
+
+    snsPublish('New schedule', {arn: 'arn:aws:sns:eu-central-1:227235672402:morninglightTopic'})
+    .catch(err => {
+      response.statusCode = 500;
+      response.body = error;
+      callback(response);
+    });
 
     callback(null, response);
   });

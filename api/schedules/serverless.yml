@@ -19,6 +19,10 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:eu-central-1:*:*"
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "arn:aws:sns:eu-central-1:*:morninglightTopic"
 
 custom:
   webpackIncludeModules: true
@@ -49,3 +53,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    morninglightTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: 'Morning Light Topic'
+        TopicName: morninglightTopic

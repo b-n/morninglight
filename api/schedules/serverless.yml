@@ -1,4 +1,4 @@
-service: morninglight
+service: morninglightSchedules
 
 plugins:
   - serverless-webpack

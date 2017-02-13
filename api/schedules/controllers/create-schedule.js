@@ -20,16 +20,17 @@ module.exports = (event, callback) => {
 
 //TODO: decide on actual api schema
 function mapToModel(eventBody) {
-  const { dayOfWeek, timeOfDay, lengthOfTime, startTemp, startIntensity, endTemp, endIntensity } = eventBody;
+  const { daysOfWeek, timeOfDay, lengthOfTime, startTemp, startIntensity, endTemp, endIntensity, isActive } = eventBody;
   return {
     id: uuid.v4(),
     updatedAt: new Date().getTime(),
-    dayOfWeek,
+    daysOfWeek,
     timeOfDay, 
     lengthOfTime,
     startTemp,
     startIntensity,
     endTemp,
-    endIntensity
+    endIntensity,
+    isActive
   }
 }

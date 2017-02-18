@@ -31,7 +31,7 @@ class Scheduler extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.schedules !== this.props.schedules) {
+    if (newProps.schedules !== this.props.schedules || newProps.selectedSchedule !== this.props.selectedSchedule) {
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(newProps.schedules)
       })
@@ -39,26 +39,11 @@ class Scheduler extends Component {
   }
 
   selectSchedule(uuid) {
+    this.props.dispatch(actions.selectSchedule(uuid));
   }
 
   toggleSchedule(uuid) {
     this.props.dispatch(actions.toggleSchedule(uuid));
-  }
-
-  renderRow(row, uuid) {
-    const { enabled, time, title, dow } = row;
-
-    return (
-      <Schedule
-        uuid={uuid}
-        enabled={enabled}
-        time={time}
-        title={title}
-        dow={dow}
-        onSelect={this.selectSchedule}
-        onToggle={this.toggleSchedule}
-      />
-    )
   }
 
   render() {
@@ -70,7 +55,21 @@ class Scheduler extends Component {
           style={style.schedule__container}
           dataSource={this.state.dataSource}
           enableEmptySections={true}
-          renderRow={(row, sectionId, rowID) => { return this.renderRow(row, rowID) }}
+          renderRow={row => {
+            const { uuid, expanded, enabled, time, title, dow } = row;
+            return (
+              <Schedule
+                uuid={uuid}
+                isExpanded={expanded}
+                enabled={enabled}
+                time={time}
+                title={title}
+                dow={dow}
+                onSelect={this.selectSchedule}
+                onToggle={this.toggleSchedule}
+              />
+            )
+          }}
         />
       </View>
     )

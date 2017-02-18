@@ -1,23 +1,46 @@
 import React, { Component } from 'react';
 import {
   Text,
+  TextInput,
   View,
   Switch,
-  TouchableHighlight,
-  StyleSheet
+  TouchableHighlight
 } from 'react-native';
 
-import style from '../styles/main'
+import style from '../styles/main';
+import ScheduleCollapsed from './schedule-collapsed';
+import ScheduleExpanded from './schedule-expanded';
 
 class Schedule extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      title: this.props.title
+    }
   }
 
   render() {
-    const { enabled, time, title, dow, uuid } = this.props;
+    const { isExpanded, enabled, time, title, dow, uuid } = this.props;
     const { onSelect, onToggle } = this.props;
+
+    const scheduleView = isExpanded
+      ?  <ScheduleExpanded
+          time={time}
+          title={title}
+          dow={dow}
+          uuid={uuid}
+          enabled={enabled}
+          onToggle={onToggle}
+        />
+      : <ScheduleCollapsed
+          time={time}
+          title={title}
+          dow={dow}
+          uuid={uuid}
+          enabled={enabled}
+          onToggle={onToggle}
+        />;
 
     return (
       <TouchableHighlight
@@ -25,19 +48,8 @@ class Schedule extends Component {
         activeOpacity={0.85}
         onPress={() => { onSelect(uuid) }}
       >
-        <View style={style.schedule}>
-          <View style={style.scheduler__row}>
-            <Text style={style.text_title}>{time}</Text>
-            <Switch
-              disabled={false}
-              value={enabled}
-              onValueChange={() => { onToggle(uuid) }}
-            />
-          </View>
-          <View style={[style.scheduler__row, style.row__padding]}>
-            <Text style={style.text_subTitle}>{title}</Text>
-            <Text style={style.text_info}>{dow}</Text>
-          </View>
+        <View>
+          {scheduleView}
         </View>
       </TouchableHighlight>
     )

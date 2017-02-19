@@ -1,32 +1,32 @@
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react'
 import {
   Text,
   View,
-  Switch
-} from 'react-native';
+  Switch,
+} from 'react-native'
 
 import style from '../styles/main'
 
-class ScheduleHeader extends Component {
+const ScheduleHeader = (props) => {
+  const { uuid, time, enabled, onToggle } = props
 
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { uuid, time, enabled, onToggle } = this.props;
-
-    return (
-      <View style={style.scheduler__row}>
-        <Text style={style.text_title}>{time}</Text>
-        <Switch
-          disabled={false}
-          value={enabled}
-          onValueChange={() => { onToggle(uuid) }}
-        />
-      </View>
-    )
-  }
+  return (
+    <View style={style.scheduler__row}>
+      <Text style={style.text_title}>{time}</Text>
+      <Switch
+        disabled={false}
+        value={enabled}
+        onValueChange={() => { onToggle(uuid) }}
+      />
+    </View>
+  )
 }
 
-export default ScheduleHeader;
+ScheduleHeader.propTypes = {
+  uuid: PropTypes.string,
+  time: PropTypes.string,
+  enabled: PropTypes.bool,
+  onToggle: PropTypes.func,
+}
+
+export default ScheduleHeader

@@ -1,4 +1,4 @@
-import React, { AppRegistry } from 'react-native';
+import React, { AppRegistry } from 'react-native'
 import App from './src/app'
 
-AppRegistry.registerComponent('morninglight', () => App);
+AppRegistry.registerComponent('morninglight', () => App)

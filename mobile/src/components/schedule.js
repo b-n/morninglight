@@ -1,59 +1,56 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react'
 import {
-  Text,
-  TextInput,
   View,
-  Switch,
   TouchableHighlight,
-  Animated
-} from 'react-native';
+  Animated,
+} from 'react-native'
 
-import style from '../styles/main';
-import ScheduleHeader from './schedule-header';
-import ScheduleCollapsed from './schedule-collapsed';
-import ScheduleExpanded from './schedule-expanded';
+import style from '../styles/main'
+import ScheduleHeader from './schedule-header'
+import ScheduleCollapsed from './schedule-collapsed'
+import ScheduleExpanded from './schedule-expanded'
+
+function calculateHeightFromProp(props) {
+  return props.isExpanded
+    ? 100
+    : 30
+}
 
 class Schedule extends Component {
 
   constructor(props) {
-    super(props);
+    super(props)
 
-    const height = this._calculateHeightFromProp(this.props.isExpanded);
-    const animation = new Animated.Value(height);
+    const height = calculateHeightFromProp(this.props)
+    const animation = new Animated.Value(height)
 
     this.state = {
-      animation
+      animation,
     }
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.isExpanded != this.props.isExpanded) {
-      this._runAnimations(newProps);
+    if (newProps.isExpanded !== this.props.isExpanded) {
+      this.runAnimations(newProps)
     }
   }
 
-  _runAnimations(newProps) {
-    const toValue = this._calculateHeightFromProp(newProps.isExpanded);
+  runAnimations(newProps) {
+    const toValue = calculateHeightFromProp(newProps)
 
     Animated.spring(
       this.state.animation,
-      { toValue }
-    ).start();
-  }
-
-  _calculateHeightFromProp(isExpanded) {
-    return isExpanded
-      ? 100 :
-      30;
+      { toValue },
+    ).start()
   }
 
   render() {
-    const { isExpanded, enabled, time, title, dow, uuid } = this.props;
-    const { onSelect, onToggle } = this.props;
+    const { isExpanded, enabled, time, title, dow, uuid } = this.props
+    const { onSelect, onToggle } = this.props
 
     const scheduleStyles = isExpanded
-    ? [ style.schedule, style.schedule__expanded ]
-    : [ style.schedule ]
+    ? [style.schedule, style.schedule__expanded]
+    : [style.schedule]
 
     return (
       <TouchableHighlight
@@ -68,9 +65,9 @@ class Schedule extends Component {
             onToggle={onToggle}
             time={time}
           />
-          <Animated.View style={{height: this.state.animation}}>
+          <Animated.View style={{ height: this.state.animation }}>
             {isExpanded
-                ?  <ScheduleExpanded
+                ? <ScheduleExpanded
                   title={title}
                   dow={dow}
                   uuid={uuid}
@@ -90,4 +87,16 @@ class Schedule extends Component {
   }
 }
 
-export default Schedule;
+Schedule.propTypes = {
+  dow: PropTypes.string,
+  uuid: PropTypes.string,
+  enabled: PropTypes.bool,
+  isExpanded: PropTypes.bool,
+  title: PropTypes.string,
+  time: PropTypes.string.isRequired,
+  onSelect: PropTypes.func,
+  onToggle: PropTypes.func,
+}
+
+
+export default Schedule

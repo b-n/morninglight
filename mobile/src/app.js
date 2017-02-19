@@ -1,37 +1,32 @@
-import React, { Component } from 'react';
-import {
-  Text
-} from 'react-native';
+import React from 'react'
 
-import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import createSagaMiddleware from 'redux-saga';
+import { createStore, applyMiddleware } from 'redux'
+import { Provider } from 'react-redux'
+import createSagaMiddleware from 'redux-saga'
 
-import rootReducer from './reducers/root-reducer';
-import rootSaga from './sagas/root-saga';
+import Scheduler from './containers/scheduler'
 
-const sagaMiddleware = createSagaMiddleware();
+import rootReducer from './reducers/root-reducer'
+import rootSaga from './sagas/root-saga'
 
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+const sagaMiddleware = createSagaMiddleware()
+
+const store = createStore(rootReducer, applyMiddleware(sagaMiddleware))
 
 if (module.hot) {
   module.hot.accept(() => {
-    const nextRootReducer = require('./reducers/root-reducer').default;
-    store.replaceReducer(nextRootReducer);
-  });
+    // eslint-disable-next-line
+    const nextRootReducer = require('./reducers/root-reducer').default
+    store.replaceReducer(nextRootReducer)
+  })
 }
 
-sagaMiddleware.run(rootSaga);
+sagaMiddleware.run(rootSaga)
 
+const App = () => (
+  <Provider store={store}>
+    <Scheduler />
+  </Provider>
+)
 
-import Scheduler from './containers/scheduler';
-
-export default class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <Scheduler />
-      </Provider>
-    );
-  }
-}
+export default App

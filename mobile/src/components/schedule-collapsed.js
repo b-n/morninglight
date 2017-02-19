@@ -1,29 +1,25 @@
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react'
 import {
   Text,
-  View
-} from 'react-native';
+  View,
+} from 'react-native'
 
 import style from '../styles/main'
 
-class ScheduleCollapsed extends Component {
+const ScheduleCollapsed = (props) => {
+  const { title, dow } = props
 
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { uuid, title, dow } = this.props;
-
-    return (
-      <View style={[style.scheduler__row, style.row__padding]}>
-        <Text style={style.text_subTitle}>{title}</Text>
-        <Text style={style.text_info}>{dow}</Text>
-      </View>
-    )
-  }
+  return (
+    <View style={[style.scheduler__row, style.row__padding]}>
+      <Text style={style.text_subTitle}>{title}</Text>
+      <Text style={style.text_info}>{dow}</Text>
+    </View>
+  )
 }
 
+ScheduleCollapsed.propTypes = {
+  title: PropTypes.string,
+  dow: PropTypes.string,
+}
 
-
-export default ScheduleCollapsed;
+export default ScheduleCollapsed

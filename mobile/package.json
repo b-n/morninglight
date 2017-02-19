@@ -14,7 +14,8 @@
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",
     "redux-saga": "^0.14.3",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "remote-redux-devtools": "^0.5.7"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
@@ -28,7 +29,8 @@
     "eslint-plugin-react-native": "^2.2.1",
     "eslint-watch": "^3.0.0",
     "jest": "18.1.0",
-    "react-test-renderer": "15.4.2"
+    "react-test-renderer": "15.4.2",
+    "remote-redux-devtools-on-debugger": "^0.7.0"
   },
   "jest": {
     "preset": "react-native"

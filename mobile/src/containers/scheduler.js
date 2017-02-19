@@ -6,13 +6,10 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-
-import Schedule from '../components/schedule';
-import ScheduleDivider from '../components/schedule-divider'
-
 import style from '../styles/main'
 import * as actions from '../actions/actions'
 
+import Schedule from '../components/schedule';
 
 class Scheduler extends Component {
 

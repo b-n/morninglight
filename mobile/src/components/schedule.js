@@ -10,7 +10,6 @@ import {
 
 import style from '../styles/main';
 import ScheduleHeader from './schedule-header';
-import ScheduleBody from './schedule-body';
 import ScheduleCollapsed from './schedule-collapsed';
 import ScheduleExpanded from './schedule-expanded';
 

@@ -25,6 +25,7 @@ class Scheduler extends Component {
 
     this.selectSchedule = this.selectSchedule.bind(this)
     this.toggleSchedule = this.toggleSchedule.bind(this)
+    this.saveTitle = this.saveTitle.bind(this)
   }
 
   componentWillReceiveProps(newProps) {
@@ -43,6 +44,9 @@ class Scheduler extends Component {
     this.props.dispatch(actions.toggleSchedule(uuid))
   }
 
+  saveTitle(uuid, title) {
+    this.props.dispatch(actions.saveTitle(uuid, title))
+  }
 
   render() {
     return (
@@ -65,6 +69,7 @@ class Scheduler extends Component {
                 dow={dow}
                 onSelect={this.selectSchedule}
                 onToggle={this.toggleSchedule}
+                onTitleChanged={this.saveTitle}
               />
             )
           }}

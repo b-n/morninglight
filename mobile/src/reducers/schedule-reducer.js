@@ -64,6 +64,14 @@ const scheduleReducer = handleActions({
       enabled: action.payload.uuid === schedule.uuid ? !schedule.enabled : schedule.enabled,
     })),
   }),
+
+  SAVE_TITLE: (state, action) => ({
+    ...state,
+    schedules: state.schedules.map(schedule => ({
+      ...schedule,
+      title: schedule.uuid === action.payload.uuid ? action.payload.title : schedule.title,
+    })),
+  }),
 }, initialState)
 
 export default scheduleReducer

@@ -15,6 +15,7 @@ class ScheduleExpanded extends Component {
       title: this.props.title,
     }
     this.updateTitle = this.updateTitle.bind(this)
+    this.sendTitleUpdate = this.sendTitleUpdate.bind(this)
   }
 
   updateTitle(text) {
@@ -22,7 +23,7 @@ class ScheduleExpanded extends Component {
   }
 
   sendTitleUpdate() {
-    this.props.onTitleUpdate(this.props.uuid, this.state.title)
+    this.props.onTitleChanged(this.props.uuid, this.state.title)
   }
 
   render() {
@@ -38,6 +39,8 @@ class ScheduleExpanded extends Component {
             style={style.text_info}
             value={this.state.title}
             onChangeText={this.updateTitle}
+            onEndEditing={this.sendTitleUpdate}
+            onSubmitEditing={this.sendTitleUpdate}
           />
         </View>
       </View>
@@ -49,7 +52,7 @@ ScheduleExpanded.propTypes = {
   title: PropTypes.string,
   uuid: PropTypes.string,
   dow: PropTypes.string,
-  onTitleUpdate: PropTypes.func,
+  onTitleChanged: PropTypes.func,
 }
 
 export default ScheduleExpanded

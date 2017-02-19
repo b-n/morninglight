@@ -46,7 +46,7 @@ class Schedule extends Component {
 
   render() {
     const { isExpanded, enabled, time, title, dow, uuid } = this.props
-    const { onSelect, onToggle } = this.props
+    const { onSelect, onToggle, onTitleChanged } = this.props
 
     const scheduleStyles = isExpanded
     ? [style.schedule, style.schedule__expanded]
@@ -72,6 +72,7 @@ class Schedule extends Component {
                   dow={dow}
                   uuid={uuid}
                   onToggle={onToggle}
+                  onTitleChanged={onTitleChanged}
                 />
                 : <ScheduleCollapsed
                   title={title}
@@ -96,6 +97,7 @@ Schedule.propTypes = {
   time: PropTypes.string.isRequired,
   onSelect: PropTypes.func,
   onToggle: PropTypes.func,
+  onTitleChanged: PropTypes.func,
 }
 
 

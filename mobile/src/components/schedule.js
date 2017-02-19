@@ -52,15 +52,17 @@ class Schedule extends Component {
     const { isExpanded, enabled, time, title, dow, uuid } = this.props;
     const { onSelect, onToggle } = this.props;
 
-    const scheduleStyles = [ style.schedule ];
+    const scheduleStyles = isExpanded
+    ? [ style.schedule, style.schedule__expanded ]
+    : [ style.schedule ]
 
     return (
       <TouchableHighlight
-        underlayColor="#0000d6"
+        underlayColor="#7889b0"
         activeOpacity={0.85}
         onPress={() => { onSelect(uuid) }}
       >
-        <View style={[style.schedule, ]}>
+        <View style={scheduleStyles}>
           <ScheduleHeader
             uuid={uuid}
             enabled={enabled}

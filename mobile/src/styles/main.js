@@ -2,20 +2,23 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   body: {
-    backgroundColor: '#0000b8',
+    backgroundColor: '#5b6f9b',
     flex: 1
   },
 
-  schedule__container: {
-    paddingVertical: 5
+  schedule: {
+    padding: 15,
+    flexDirection: 'column'
   },
 
-  schedule: {
+  schedule_divider: {
     marginHorizontal: 15,
-    paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgrey',
-    flexDirection: 'column'
+    borderBottomColor: 'lightgrey'
+  },
+
+  schedule__expanded: {
+    backgroundColor: '#6b7ea8'
   },
 
   scheduler__row: {
@@ -28,7 +31,7 @@ export default StyleSheet.create({
   },
 
   text_title: {
-    fontSize: 36,
+    fontSize: 48,
     fontFamily: 'sans-serif-thin',
     color: 'white'
   },

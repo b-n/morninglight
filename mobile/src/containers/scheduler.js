@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 
 
 import Schedule from '../components/schedule';
+import ScheduleDivider from '../components/schedule-divider'
 
 import style from '../styles/main'
 import * as actions from '../actions/actions'
@@ -52,9 +53,9 @@ class Scheduler extends Component {
     return(
       <View style={style.body}>
         <ListView
-          style={style.schedule__container}
           dataSource={this.state.dataSource}
           enableEmptySections={true}
+          renderSeparator={(sectionId, rowId) => { return <View key={rowId} style={style.schedule_divider} /> }}
           renderRow={row => {
             const { uuid, expanded, enabled, time, title, dow } = row;
             return (

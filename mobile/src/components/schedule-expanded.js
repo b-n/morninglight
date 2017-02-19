@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Text,
+  TextInput,
   View
 } from 'react-native';
 
@@ -10,24 +11,34 @@ class ScheduleExpanded extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      title: this.props.title
+    }
+    this._updateTitle = this._updateTitle.bind(this);
+  }
+
+  _updateTitle(text) {
+    this.setState({ title: text });
   }
 
   render() {
-    const { time, enabled, uuid, title, dow, onToggle } = this.props;
+    const { uuid, dow, onToggle } = this.props;
+    console.log(this.state.title);
 
     return (
-      <View style={[style.scheduler__row, style.row__padding]}>
-        <Text>Expanded</Text>
-        <Text style={style.text_subTitle}>{title}</Text>
-        <Text style={style.text_info}>{dow}</Text>
+      <View>
+        <View style={style.row__padding}>
+          <Text style={style.text_info}>{dow}</Text>
+        </View>
+        <View>
+          <TextInput
+            style={style.text_info}
+            value={this.state.title}
+            onChangeText={this._updateTitle}/>
+        </View>
       </View>
     )
   }
 }
-    //<TextInput
-    //style={style.text_subTitle}
-    //value={this.state.title}
-    //onChangeText={(text) => { this.setState({ title: text })}}
-    ///>
 
 export default ScheduleExpanded;

@@ -1,0 +1,42 @@
+service: morninglight-api
+
+plugins:
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: "webpack.config.js"
+    includeModules: 
+      forceExclude:
+        - aws-sdk
+    packager: "yarn"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: eu-central-1
+  environment:
+    PHOTON_API_KEY: ${file(./secrets.json):PHOTON_API_KEY}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:Query"
+      Resource: "arn:aws:dynamodb:eu-central-1:*:*"
+
+functions:
+  animate:
+    handler: handler.animate
+    events:
+      - http:
+          path: animate
+          method: get
+      - cloudwatchEvent:
+          event:
+            source:
+              - "lights.on"
+            detail-type:
+              - "Morning Light on timer"
+            detail:
+              state:
+                - pending

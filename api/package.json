@@ -3,16 +3,23 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "sideEffects": false,
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.4",
     "babel-plugin-source-map-support": "^2.0.1",
-    "babel-preset-env": "^1.7.0",
     "serverless-webpack": "^5.2.0",
     "webpack": "^4.21.0",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "aws-sdk": "^2.340.0",
+    "cron-parser": "^2.6.0",
+    "date-fns": "^2.0.0-alpha.24",
     "node-fetch": "^2.2.0",
     "source-map-support": "^0.5.9"
   }

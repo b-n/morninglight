@@ -11,32 +11,79 @@ custom:
         - aws-sdk
     packager: "yarn"
 
+package:
+  individually: true
+
 provider:
   name: aws
   runtime: nodejs8.10
   stage: dev
   region: eu-central-1
+  timeout: 20
   environment:
+    REGION: ${self:provider.region}
     PHOTON_API_KEY: ${file(./secrets.json):PHOTON_API_KEY}
+    CRON_NAME: ${self:service}-${self:provider.stage}-cron
+    DYNAMODB_TABLE: ${self:service}-${self:provider.stage}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "dynamodb:Query"
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:eu-central-1:*:*"
+    - Effect: "Allow"
+      Action:
+        - events:ListTargetsByRule
+        - events:PutTargets
+        - events:PutRule
+        - events:PutEvents
+      Resource: "*"
+
 
 functions:
-  animate:
-    handler: handler.animate
+  executer:
+    handler: controllers/Executor.handle
     events:
-      - http:
-          path: animate
-          method: get
+      - schedule:
+          name: ${self:provider.environment.CRON_NAME}
+          rate: cron(0 0 1 1 ? 1970)
+          enabled: false
+  scheduler:
+    handler: controllers/Scheduler.handle
+    events:
       - cloudwatchEvent:
           event:
             source:
-              - "lights.on"
+              - "io.morninglight"
             detail-type:
-              - "Morning Light on timer"
-            detail:
-              state:
-                - pending
+              - "cron:executed"
+              - "schedule:updated"
+  schedule:
+    handler: controllers/Schedule.handle
+    events:
+      - http:
+          path: schedule
+          method: post
+
+resources:
+  Resources:
+    MorningLightScheduleTable:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: "Retain"
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

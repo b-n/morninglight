@@ -19,8 +19,10 @@ export default class Particle {
       endTemp,
       startIntensity,
       endIntensity,
-      overallDuration
+      totalDuration
     } = data
+
+    const body = `args=${startTemp},${startIntensity},${endTemp},${endIntensity},${duration*1000},${totalDuration*1000}`
 
     return fetch(
       `https://api.particle.io/v1/devices/${deviceId}/animateLight`,
@@ -30,7 +32,7 @@ export default class Particle {
           "Authorization": `Bearer ${this.apiKey}`,
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: `args=${startTemp},${startIntensity},${endTemp},${endIntensity},${duration*1000},${overallDuration*1000}`
+        body
       }
     )
     .then(response => response.json())

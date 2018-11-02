@@ -20,12 +20,11 @@ class Scheduler {
 
     const scheduledTime = await this.getNextRunTime(fromDate)
 
-    return this.eventer.setCronEvent(scheduledTime, { lastRun, scheduledTime });
+    return this.eventer.setCronEvent(scheduledTime, { lastRun: fromDate, scheduledTime });
   }
 
   async getNextRunTime(currentDate) {
     const queryResults = await this.db.getActiveItems()
-    console.log(currentDate);
 
     const nextRuns = queryResults.Items.map(({cron, tz}) => new Date(parser.parseExpression(cron, { currentDate, tz }).next().toString()));
 

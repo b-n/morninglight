@@ -19,7 +19,7 @@ class Executor {
 
     const results = await Promise.all(
       queryResults.Items
-        .filter(item => this.isCronInRange(item.cron, item.timezone, lastRun, scheduledTime))
+        .filter(item => this.isCronInRange(item.cron, item.tz, lastRun, scheduledTime))
         .map(item => this.getActionFromSchedule(item))
     )
 

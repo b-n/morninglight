@@ -22,7 +22,7 @@ export default class Particle {
       totalDuration
     } = data
 
-    const body = `args=${startTemp},${startIntensity},${endTemp},${endIntensity},${duration*1000},${totalDuration*1000}`
+    const body = `args=1,${startTemp},${startIntensity},${endTemp},${endIntensity},${duration*1000},${totalDuration*1000}`
 
     return fetch(
       `https://api.particle.io/v1/devices/${deviceId}/animateLight`,

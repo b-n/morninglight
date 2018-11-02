@@ -7,53 +7,98 @@
 #define PIXEL_COUNT 30
 #define PIXEL_PIN D2
 #define PIXEL_TYPE WS2812B
+#define FRAME_RATE 30
+#define FRAME_RATE_MS 1000 / FRAME_RATE
 
 #define MAX_K_STEP 25
 #define MAX_I_STEP 0.001
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE);
-elapsedMillis timer;
+elapsedMillis loopTimer = 0;
+elapsedMillis animationTimer = 0;
+elapsedMillis durationTimer = 0;
 
-int remainingSteps = 0;
-int animationSteps = 0;
-double kStepSize = 0.0;
-double iStepSize = 0.0;
-double tStepSize = 0.0;
-double currentK = 5500.0;
-double currentI = 0.0;
+bool isRunning = false;
+bool isAnimating = false;
+
+double duration = 0;
+double animationDuration = 0;
+double startI = 0;
+double endI = 0;
+double startK = 0;
+double endK = 0;
+double currentI = 0;
+double currentK = 0;
+
 String reqCommand;
 
-int rValue=0,gValue=0,bValue=0;
-
 void setup() {
-    timer = 0;
-    Particle.function("animateLight", animateLightStr);
-    Particle.variable("kc", currentK);
-    Particle.variable("ic", currentI);
-    Particle.variable("ks", kStepSize);
-    Particle.variable("is", iStepSize);
-    Particle.variable("ts", tStepSize);
-    Particle.variable("rem", remainingSteps);
+    Particle.function("animateLight", handleRequest);
+
+    Particle.variable("si", startI);
+    Particle.variable("ei", endI);
+    Particle.variable("sk", startK);
+    Particle.variable("ek", endK);
+    Particle.variable("ci", currentI);
+    Particle.variable("ck", currentK);
     Particle.variable("com", reqCommand);
 
     strip.begin();
-    strip.show();
-    remainingSteps++; //run once on loop
+    setRGB(0,0,0);
 }
 
 void loop() {
-    if (timer > tStepSize) {
+    if (loopTimer > FRAME_RATE_MS) {
         runStep();
-        timer = 0;
+        loopTimer = 0;
     }
 }
 
-int animateLightStr(String command) {
+void runStep() {
+    if (!isRunning) return;
+
+    if (!isAnimating) {
+        if (durationTimer > duration) {
+            isRunning = false;
+            setRGB(0, 0, 0);
+        }
+        return;
+    }
+
+    float progress = getAdjustedProgress(animationTimer / animationDuration);
+
+    if (animationTimer >= animationDuration) {
+        progress = 1;
+        isAnimating = false;
+    }
+
+    currentK = (endK - startK) * progress;
+    currentI = (endI - startI) * progress;
+
+    setRGB(
+        getRvalueFromK(currentK, currentI),
+        getGvalueFromK(currentK, currentI),
+        getBvalueFromK(currentK, currentI)
+    );
+
+
+    return;
+}
+
+float getAdjustedProgress(float progress) {
+    double a = 0.85;
+    double b = 0.1;
+    double c = progress - 0.5;
+
+    return ((c/sqrt(b + pow(c,2))) + a) / (2 * a);
+}
+
+int handleRequest(String command) {
     reqCommand = command;
 
-    double values[6];
+    double values[10];
     int i = 0;
-    int currentIndex = 0;
+    int currentIndex = -1;
     int newIndex = 0;
     do {
         newIndex = command.indexOf(",", currentIndex+1);
@@ -64,46 +109,36 @@ int animateLightStr(String command) {
         i++;
     } while (currentIndex != -1);
 
-    animateLight(values[0], values[1], values[2], values[3], values[4], values[5]);
-    return remainingSteps;
-}
-
-void animateLight(double startTemp, double startIntensity, double endTemp, double endIntensity, double animateDuration, double totalDuration) {
-    currentK = startTemp;
-    currentI = startIntensity;
-
-    double tempDiff = fabs(endTemp - startTemp);
-    double intensityDiff = fabs(endIntensity - startIntensity);
-
-    double tempSteps = tempDiff/MAX_K_STEP;
-    double intensitySteps = intensityDiff/MAX_I_STEP;
-
-    animationSteps = (int)(tempSteps > intensitySteps ? tempSteps : intensitySteps);
-
-    kStepSize = tempDiff / animationSteps;
-    iStepSize = intensityDiff / animationSteps;
-    tStepSize = animateDuration / animationSteps;
-
-    remainingSteps = (totalDuration / animateDuration) * animationSteps;
-}
-
-void runStep() {
-    if (remainingSteps < 0) return;
-
-    if (remainingSteps == 0) setRGB(0,0,0);
-
-    if (animationSteps >= 0) {
-        setRGB(
-                getRvalue(currentK, currentI),
-                getGvalue(currentK, currentI),
-                getBvalue(currentK, currentI)
-              );
-
-        currentK += kStepSize;
-        currentI += iStepSize;
-        animationSteps--;
+    if (values[0] == 0) {
+        turnOffLight(values);
+    } else if (values[0] == 1) {
+        animateLight(values);
     }
-    remainingSteps--;
+
+    isAnimating = true;
+    isRunning = true;
+    animationTimer = 0;
+    durationTimer = 0;
+
+    return (int)values[0];
+}
+
+void turnOffLight(double values[]) {
+    startK = currentK;
+    endK = currentK;
+    startI = currentI;
+    endI = 0;
+    animationDuration = 1000;
+    duration = animationDuration;
+}
+
+void animateLight(double values[]) {
+    startK = values[1];
+    startI = values[2];
+    endK = values[3];
+    endI = values[4];
+    animationDuration = values[5];
+    duration = values[6];
 }
 
 void setRGB(int rVal, int gVal, int bVal) {
@@ -115,10 +150,10 @@ void setRGB(int rVal, int gVal, int bVal) {
     strip.show();
 }
 
-int getRvalue(double k, double i) {
+int getRvalueFromK(double k, double i) {
     double a,b,c,x,r;
     if (k < 6600) {
-        r = 255.0;   
+        r = 255.0;
     } else {
         a = 351.97690566805693;
         b = 0.114206453784165;
@@ -129,7 +164,7 @@ int getRvalue(double k, double i) {
     return getSafeIntensityValue(r, i);
 }
 
-int getGvalue(double k, double i) {
+int getGvalueFromK(double k, double i) {
     double a,b,c,x,r;
     if (k < 200) {
         r = 0.0;
@@ -150,7 +185,7 @@ int getGvalue(double k, double i) {
     return getSafeIntensityValue(r, i);
 }
 
-int getBvalue(double k, double i) {
+int getBvalueFromK(double k, double i) {
     double a,b,c,x,r;
     if (k <= 1000) {
         r = 0.0;

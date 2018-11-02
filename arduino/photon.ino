@@ -72,8 +72,8 @@ void runStep() {
         isAnimating = false;
     }
 
-    currentK = (endK - startK) * progress;
-    currentI = (endI - startI) * progress;
+    currentK = startK + ((endK - startK) * progress);
+    currentI = startI + ((endI - startI) * progress);
 
     setRGB(
         getRvalueFromK(currentK, currentI),

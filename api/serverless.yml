@@ -46,14 +46,14 @@ provider:
 
 functions:
   executer:
-    handler: controllers/Executor.handle
+    handler: handlers/executer.handler
     events:
       - schedule:
           name: ${self:provider.environment.CRON_NAME}
           rate: cron(0 0 1 1 ? 1970)
           enabled: false
   scheduler:
-    handler: controllers/Scheduler.handle
+    handler: handlers/scheduler.handler
     events:
       - cloudwatchEvent:
           event:
@@ -63,11 +63,23 @@ functions:
               - "cron:executed"
               - "schedule:updated"
   schedule:
-    handler: controllers/Schedule.handle
+    handler: handlers/schedules.handler
     events:
       - http:
-          path: schedule
+          path: schedules
+          method: get
+      - http:
+          path: schedules/{id}
+          method: get
+      - http:
+          path: schedules
           method: post
+      - http:
+          path: schedules/{id}
+          method: put
+      - http:
+          path: schedules/{id}
+          method: delete
 
 resources:
   Resources:

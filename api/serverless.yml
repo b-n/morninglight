@@ -62,24 +62,29 @@ functions:
             detail-type:
               - "cron:executed"
               - "schedule:updated"
-  schedule:
+  schedules:
     handler: handlers/schedules.handler
     events:
       - http:
           path: schedules
           method: get
+          cors: true
       - http:
           path: schedules/{id}
           method: get
+          cors: true
       - http:
           path: schedules
           method: post
+          cors: true
       - http:
           path: schedules/{id}
           method: put
+          cors: true
       - http:
           path: schedules/{id}
           method: delete
+          cors: true
 
 resources:
   Resources:

@@ -8,18 +8,6 @@ export default class DynamoDB {
     this.table = tableName
   }
 
-  async getActiveItems() {
-    return this.dynamodb.scan({
-      TableName: this.table,
-      ScanFilter: {
-        isActive: {
-          ComparisonOperator: 'EQ',
-          AttributeValueList: [ true ]
-        }
-      }
-    }).promise()
-  }
-
   async scan(filters) {
     const dynamoFilters = Object.keys(filters).reduce((newFilters,  key) => {
       newFilters[key] = {

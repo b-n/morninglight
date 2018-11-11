@@ -1,18 +1,12 @@
 import min from 'date-fns/min'
 import parser from 'cron-parser'
-
-import DynamoDB from '../lib/DynamoDB'
+import { getActiveRecords } from '../models/schedule'
 
 class Scheduler {
-
-  constructor() {
-    this.db = new DynamoDB()
-  }
-
   async getNextRunTime(from) {
-    const queryResults = await this.db.getActiveItems()
+    const schedules = await getActiveRecords()
 
-    const nextRuns = queryResults.Items.map(({cron, tz}) =>
+    const nextRuns = schedules.map(({cron, tz}) =>
       new Date(parser.parseExpression(cron, { currentDate: from, tz }).next().toString())
     );
 

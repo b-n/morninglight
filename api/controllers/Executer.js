@@ -1,18 +1,13 @@
 import parser from 'cron-parser'
-import DynamoDB from '../lib/DynamoDB'
+import { getActiveRecords } from '../models/schedule'
 import Particle from '../lib/Particle'
 
 class Executer {
-
-  constructor() {
-    this.db = new DynamoDB()
-  }
-
   async runAllActions({from, to}) {
-    const queryResults = await this.db.getActiveItems()
+    const schedules = await getActiveRecords();
 
     return Promise.all(
-      queryResults.Items
+      schedules
         .filter(item => this.isCronInRange(item.cron, item.tz, from, to))
         .map(item => this.getActionFromSchedule(item))
     )

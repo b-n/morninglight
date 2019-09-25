@@ -24,6 +24,15 @@ module.exports = {
             loader: 'babel-loader'
           }
         ],
+      },
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader'
+          }
+        ],
       }
     ]
   },

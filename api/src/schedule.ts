@@ -7,40 +7,25 @@ import { CloudWatchEvents } from './lib/CloudWatchEvents'
 const handler = async (event, context) => {
   const { httpMethod, body, pathParameters, lastRun } = event;
 
-  if (httpMethod != null) {
-    if (httpMethod == 'GET') {
-      const id = pathParameters && pathParameters.id;
+  if (httpMethod == 'GET') {
+    const id = pathParameters && pathParameters.id;
 
-      const result = id
-        ? getById(id)
-        : getActiveRecords();
+    const result = id
+      ? getById(id)
+      : getActiveRecords();
 
-      return getCORSResponse(result)
-    }
-
-    if (httpMethod == 'POST') {
-      const result = upsertRecord(JSON.parse(body));
-      
-      return getCORSResponse(result)
-    }
-
-    return getCORSResponse({ message: "Unknown request type" }, 400)
+    return getCORSResponse(result)
   }
 
-  if (lastRun != null) {
-    const from = lastRun || new Date().getTime()
+  if (httpMethod == 'POST') {
+    const result = upsertRecord(JSON.parse(body));
 
-    const allSchedules = await getActiveRecords();
-
-    const nextRun = min(
-      allSchedules
-        .map(({cron, tz}) => getNextRunTime(cron, tz, from).toString())
-    );
-
-    return new CloudWatchEvents()
-      .setCronEvent(nextRun, { lastRun: from, scheduledTime: nextRun })
+    return getCORSResponse(result)
   }
 
-  throw new Error('unknown execution')
+  return getCORSResponse({ message: "Unknown request type" }, 400)
 }
 
+export {
+  handler
+}

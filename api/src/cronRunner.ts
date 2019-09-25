@@ -1,7 +1,7 @@
 import { getActiveRecords } from './models/schedule'
 import { isCronInRange } from './lib/time'
 import { Particle } from './lib/Particle'
-import { CloudWatchEvents } from './lib/CloudWatchEvents'
+import { sendEvent } from './lib/CloudWatchEvents'
 
 const handler = async (event, context) => {
   const { lastRun, scheduledTime } = event
@@ -14,8 +14,7 @@ const handler = async (event, context) => {
     .map(item => this.getActionFromSchedule(item))
   )
 
-  return new CloudWatchEvents()
-    .sendEvent('cron:executed', { lastRun: scheduledTime })
+  return sendEvent('cron:executed', { lastRun: scheduledTime })
 }
 
 const getActionFromSchedule = async (item) => {

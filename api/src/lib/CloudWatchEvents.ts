@@ -1,60 +1,50 @@
 import AWS from 'aws-sdk';
-
 import { getCronFromDateTime } from './time'
 
-class CloudWatchEvents {
-  private cwevents
-  private cronJobName
+AWS.config.update({ region: process.env.REGION })
 
-  constructor() {
-    const { REGION, CRON_NAME } = process.env
-    AWS.config.update({region: REGION})
-    this.cwevents = new AWS.CloudWatchEvents({apiVersion: '2015-10-07'})
-    this.cronJobName = CRON_NAME
+const eventer = new AWS.CloudWatchEvents({apiVersion: '2015-10-07'})
+
+const sendEvent = (eventName, data) => {
+  const params = {
+    Entries: [{
+      Detail: JSON.stringify(data),
+      DetailType: eventName,
+      Source: 'io.morninglight',
+    }]
   }
+  return eventer.putEvents(params).promise()
+}
 
-  async sendEvent(eventName, data) {
-    const params = {
-      Entries: [{
-          Detail: JSON.stringify(data),
-          DetailType: eventName,
-          Source: 'io.morninglight',
-      }]
-    }
-    return this.cwevents.putEvents(params).promise()
-  }
+const setCronEvent = (datetime, data) => {
+  const jobName = process.env.CRON_NAME
 
-  async setCronEvent(dt, data) {
-    const cronString = getCronFromDateTime(dt)
+  const cronString = getCronFromDateTime(datetime)
 
-    await this.setCronData(data)
+  const newInput = JSON.stringify(data)
 
-    return this.schedule(cronString)
-  }
+  return eventer.listTargetsByRule({ Rule: jobName }).promise()
+    .then(setCronEventData(jobName, data))
+    .then(setCronString(jobName, cronString))
+}
 
-  async setCronData(data) {
-    const newInput = JSON.stringify(data)
+const setCronEventData = (ruleName, data) => (cronRule) => {
+  const newTargets = cronRule.Targets.map(target => ({ ...target, Input: data }))
 
-    const ruleData = await this.cwevents.listTargetsByRule({ Rule: this.cronJobName }).promise()
+  return eventer.putTargets({
+    Rule: ruleName,
+    Targets: newTargets
+  }).promise()
+}
 
-    const newTargets = ruleData.Targets.map(target => ({ ...target, Input: newInput }))
-
-    return this.cwevents.putTargets({
-      Rule: this.cronJobName,
-      Targets: newTargets
-    }).promise()
-  }
-
-  async schedule(cronString) {
-    const { CRON_NAME } = process.env
-
-    return this.cwevents.putRule({
-      Name: CRON_NAME,
-      ScheduleExpression: `cron(${cronString})`
-    }).promise()
-  }
+const setCronString = (ruleName, cronString) => () => {
+  return eventer.putRule({
+    Name: ruleName,
+    ScheduleExpression: `cron(${cronString})`
+  }).promise()
 }
 
 export {
-  CloudWatchEvents,
+  sendEvent,
+  setCronEvent,
 }

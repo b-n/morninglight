@@ -17,7 +17,7 @@ const isCronInRange = (cronString, tz, currentDate, endDate) => {
 }
 
 const getNextRunTime = (cronString, timezone, from = new Date()) =>
-  parser.parseExpression(cronString, { currentDate: from, tz: timezone }).next()
+  parser.parseExpression(cronString, { currentDate: from, tz: timezone }).next().toDate()
 
 export {
   getCronFromDateTime,

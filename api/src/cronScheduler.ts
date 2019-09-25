@@ -1,9 +1,7 @@
-
-import { getCORSResponse } from './lib/APIGateway'
-import { getById, getActiveRecords, upsertRecord } from './models/schedule'
+import { getActiveRecords } from './models/schedule'
 import { getNextRunTime } from './lib/time'
 import min from 'date-fns/min'
-import { CloudWatchEvents } from './lib/CloudWatchEvents'
+import { setCronEvent } from './lib/CloudWatchEvents'
 
 const handler = async (event, context) => {
   const { lastRun } = event
@@ -13,11 +11,10 @@ const handler = async (event, context) => {
 
   const nextRun = min(
     allSchedules
-    .map(({cron, tz}) => getNextRunTime(cron, tz, from).toString())
+      .map(({cron, tz}) => getNextRunTime(cron, tz, from))
   );
 
-  return new CloudWatchEvents()
-    .setCronEvent(nextRun, { lastRun: from, scheduledTime: nextRun })
+  return setCronEvent(nextRun, { lastRun: from, scheduledTime: nextRun })
 }
 
 export {

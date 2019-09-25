@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 
-export default class Particle {
+class Particle {
+  private apiKey
 
   constructor() {
     this.apiKey = process.env.PHOTON_API_KEY
@@ -38,5 +39,8 @@ export default class Particle {
     .then(response => response.json())
     .catch(err => err)
   }
+}
 
+export {
+  Particle,
 }

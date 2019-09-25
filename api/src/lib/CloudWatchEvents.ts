@@ -2,7 +2,9 @@ import AWS from 'aws-sdk';
 
 import { getCronFromDateTime } from './time'
 
-export default class CloudWatchEvents {
+class CloudWatchEvents {
+  private cwevents
+  private cronJobName
 
   constructor() {
     const { REGION, CRON_NAME } = process.env
@@ -51,4 +53,8 @@ export default class CloudWatchEvents {
       ScheduleExpression: `cron(${cronString})`
     }).promise()
   }
+}
+
+export {
+  CloudWatchEvents,
 }

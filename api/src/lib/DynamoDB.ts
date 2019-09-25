@@ -1,6 +1,8 @@
 import AWS from 'aws-sdk'
 
 export default class DynamoDB {
+  private dynamodb
+  private table
 
   constructor(tableName) {
     AWS.config.update({region: process.env.REGION})

@@ -3,8 +3,11 @@ const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  entry: slsw.lib.entries,
   target: 'node',
+  entry: slsw.lib.entries,
+  resolve: {
+    extensions: [ '.ts', '.js', '.json' ],
+  },
   mode: slsw.lib.webpack.isLocal ? 'development': 'production',
   optimization: {
     minimize: false
@@ -17,6 +20,15 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader'
+          }
+        ],
+      },
+      {
         test: /\.js$/,
         exclude: /node_modules/,
         use: [
@@ -25,15 +37,6 @@ module.exports = {
           }
         ],
       },
-      {
-        test: /\.ts$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'ts-loader'
-          }
-        ],
-      }
     ]
   },
   output: {

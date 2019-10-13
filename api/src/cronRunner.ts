@@ -1,26 +1,31 @@
 import { getActiveRecords } from './models/schedule'
 import { isCronInRange } from './lib/time'
-import { Particle } from './lib/Particle'
+import { Particle, ParticleRequest } from './lib/Particle'
 import { sendEvent } from './lib/CloudWatchEvents'
 
-const handler = async (event, context) => {
+interface Event {
+  lastRun: Date
+  scheduledTime: Date
+}
+
+const handler = async (event: Event) => {
   const { lastRun, scheduledTime } = event
 
   const schedules = await getActiveRecords();
 
-  const result = await Promise.all(
+  await Promise.all(
     schedules
-    .filter(item => this.isCronInRange(item.cron, item.tz, lastRun, scheduledTime))
-    .map(item => this.getActionFromSchedule(item))
+    .filter(item => isCronInRange(item.cron, item.tz, lastRun, scheduledTime))
+    .map(item => getActionFromSchedule(item))
   )
 
   return sendEvent('cron:executed', { lastRun: scheduledTime })
 }
 
-const getActionFromSchedule = async (item) => {
+const getActionFromSchedule = async (item: Schedule) => {
     //TODO: should collect per type, and call to appropriate handler
     const { type, action, data } = item
-    if (type == 'particle') return new Particle().runAction(action, data)
+    if (type === ScheduleActionType.particle) return new Particle().runAction(action, data as ParticleRequest)
     return Promise.reject('Not a valid type')
   }
 

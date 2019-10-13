@@ -1,4 +1,12 @@
-const getCORSResponse = (body, statusCode = 200) => ({
+interface APIGatewayResponse {
+  statusCode: number,
+  body: string,
+  headers: {
+    [name: string]: any
+  }
+}
+
+const getCORSResponse = (body: Array<any> | Record<any, any>, statusCode = 200): APIGatewayResponse => ({
   statusCode: statusCode,
   body: JSON.stringify(body),
   headers: {
@@ -8,5 +16,6 @@ const getCORSResponse = (body, statusCode = 200) => ({
 })
 
 export {
+  APIGatewayResponse,
   getCORSResponse,
 }

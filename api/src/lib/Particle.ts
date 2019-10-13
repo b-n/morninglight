@@ -1,18 +1,28 @@
 import fetch from 'node-fetch'
 
+interface ParticleRequest {
+  deviceId: string
+  duration: number
+  startTemp: number
+  endTemp: number
+  startIntensity: number
+  endIntensity: number
+  totalDuration: number
+}
+
 class Particle {
-  private apiKey
+  private apiKey: string
 
   constructor() {
-    this.apiKey = process.env.PHOTON_API_KEY
+    this.apiKey = process.env.PHOTON_API_KEY!
   }
 
-  async runAction(action, data) {
+  async runAction(action: string, data: ParticleRequest) {
     if (action == 'TEMP_ANIMATE') return this.animateTemp(data)
     return Promise.reject('No such action type')
   }
 
-  async animateTemp(data) {
+  async animateTemp(data: ParticleRequest) {
     const {
       deviceId,
       duration,
@@ -43,4 +53,5 @@ class Particle {
 
 export {
   Particle,
+  ParticleRequest,
 }

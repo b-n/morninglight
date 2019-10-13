@@ -1,21 +1,28 @@
-import { getCORSResponse } from './lib/APIGateway'
+import { APIGatewayProxyEvent } from 'aws-lambda'
+
+import { getCORSResponse, APIGatewayResponse } from './lib/APIGateway'
+
 import { getById, getActiveRecords, upsertRecord } from './models/schedule'
 
-const handler = async (event, context) => {
-  const { httpMethod, body, pathParameters, lastRun } = event;
+interface Event extends APIGatewayProxyEvent {
+  body: string
+}
+
+const handler = async (event: Event) : Promise<APIGatewayResponse> => {
+  const { httpMethod, body, pathParameters } = event;
 
   if (httpMethod == 'GET') {
     const id = pathParameters && pathParameters.id;
 
     const result = id
-      ? getById(id)
-      : getActiveRecords();
+      ? await getById(id)
+      : await getActiveRecords();
 
     return getCORSResponse(result)
   }
 
   if (httpMethod == 'POST') {
-    const result = upsertRecord(JSON.parse(body));
+    const result = await upsertRecord(JSON.parse(body) as Schedule);
 
     return getCORSResponse(result)
   }

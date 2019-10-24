@@ -12,5 +12,5 @@ interface Schedule {
 }
 
 declare enum ScheduleActionType {
-  particle
+  particle = 'PARTICLE'
 }

@@ -1,0 +1,39 @@
+{
+  "body": null,
+  "headers": {},
+  "httpMethod": "",
+  "isBase64Encoded": false,
+  "multiValueHeaders": {},
+  "multiValueQueryStringParameters": {},
+  "path": "",
+  "pathParameters": {},
+  "queryStringParameters": {},
+  "resource": "",
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "12345678",
+    "httpMethod": "",
+    "identity": {
+      "accessKey": "",
+      "accountId": "123456789012",
+      "apiKey": "",
+      "apiKeyId": "",
+      "caller": "",
+      "cognitoAuthenticationProvider": "",
+      "cognitoAuthenticationType": "",
+      "cognitoIdentityId": "",
+      "cognitoIdentityPoolId": "",
+      "sourceIp": "",
+      "user": "",
+      "userAgent": "",
+      "userArn": ""
+    },
+    "path": "",
+    "stage": "",
+    "requestId": "",
+    "requestTimeEpoch": 0,
+    "resourceId": "",
+    "resourcePath": ""
+  },
+  "stageVariables": {}
+}

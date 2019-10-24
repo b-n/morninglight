@@ -9,7 +9,7 @@ jest.mock('../models/schedule')
 
 describe('Service has an API for checking and maintaining schedules', () => {
 
-  test('GET: all active schedules', async () => {
+  test('GET: all active schedules', () => {
     const event = {
       ...eventHttp,
       httpMethod: 'GET',
@@ -23,7 +23,7 @@ describe('Service has an API for checking and maintaining schedules', () => {
       .then(result => {
         expect(modelMock).toHaveBeenCalled();
         expect(result.statusCode).toEqual(200);
-        expect(JSON.parse(result.body)).toStrictEqual([schedule]);
+        expect(JSON.parse(result.body)).toStrictEqual(activeRecords);
       })
   })
 
@@ -79,7 +79,6 @@ describe('Service has an API for checking and maintaining schedules', () => {
         expect(result.statusCode).toEqual(200)
         expect(JSON.parse(result.body)).toStrictEqual(schedule)
       })
-  
   })
 
   test('POST: handles validation gracefully', () => {
@@ -97,7 +96,6 @@ describe('Service has an API for checking and maintaining schedules', () => {
         expect(modelMock).toBeCalled();
         expect(result.statusCode).toEqual(400)
       })
-  
   })
 
   test('UNKNOWN: graceful return', () => {
@@ -111,5 +109,4 @@ describe('Service has an API for checking and maintaining schedules', () => {
         expect(result.statusCode).toEqual(400);
       })
   })
-
 })

@@ -1,19 +1,19 @@
-import format from 'date-fns/format'
 import parser from 'cron-parser'
+import format from 'date-fns/format'
 
-const getCronFromDateTime = (dt: Date | number) : string => {
+const getCronFromDateTime = (dt: Date | number): string => {
   return format(dt, 'm HH d M ? yyyy')
 }
 
 const isCronInRange = (
   cronString: string,
   tz: string,
-  currentDate: Date,
+  startDate: Date,
   endDate: Date
 ): boolean => {
   try {
     parser
-      .parseExpression(cronString, { currentDate, endDate, tz })
+      .parseExpression(cronString, { currentDate: startDate, endDate, tz })
       .next()
     return true
   } catch (e) {
@@ -30,7 +30,7 @@ const getNextRunTime = (
     cronString,
     {
       currentDate: from,
-      tz: timezone
+      tz: timezone,
     }
   ).next().toDate()
 }

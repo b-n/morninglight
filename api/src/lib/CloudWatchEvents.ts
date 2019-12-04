@@ -1,4 +1,4 @@
-import AWS, { CloudWatchEvents } from 'aws-sdk';
+import AWS, { CloudWatchEvents } from 'aws-sdk'
 import { ListTargetsByRuleResponse } from 'aws-sdk/clients/cloudwatchevents'
 import { getCronFromDateTime } from './time'
 
@@ -6,7 +6,7 @@ AWS.config.update({ region: process.env.REGION })
 
 type EventData = Record<string, any> | Array<any>
 
-const eventer = new CloudWatchEvents({apiVersion: '2015-10-07'})
+const events = new CloudWatchEvents({ apiVersion: '2015-10-07' })
 
 const sendEvent = (eventName: string, data: EventData): Promise<EventData> => {
   const params = {
@@ -14,9 +14,10 @@ const sendEvent = (eventName: string, data: EventData): Promise<EventData> => {
       Detail: JSON.stringify(data),
       DetailType: eventName,
       Source: 'io.morninglight',
-    }]
+    }],
   }
-  return eventer.putEvents(params).promise()
+  return events
+    .putEvents(params).promise()
     .then(() => data)
 }
 
@@ -25,7 +26,8 @@ const setCronEvent = (datetime: number | Date, data: EventData): Promise<EventDa
 
   const cronString = getCronFromDateTime(datetime)
 
-  return eventer.listTargetsByRule({ Rule: jobName }).promise()
+  return events
+    .listTargetsByRule({ Rule: jobName }).promise()
     .then(setRuleTargetsWithData(jobName, data))
     .then(setRuleCronString(jobName, cronString))
     .then(() => data)
@@ -33,21 +35,23 @@ const setCronEvent = (datetime: number | Date, data: EventData): Promise<EventDa
 
 const setRuleTargetsWithData = (ruleName: string, data: EventData) => (cronRule: ListTargetsByRuleResponse) => {
   if (!cronRule.Targets) {
-    return Promise.reject('Rule has no targets')
+    return Promise.reject(new Error('Rule has no targets'))
   }
-  const newTargets = cronRule.Targets.map(target => ({ ...target, Input: JSON.stringify(data) }))
+  const newTargets = cronRule.Targets.map((target) => ({ ...target, Input: JSON.stringify(data) }))
 
-  return eventer.putTargets({
-    Rule: ruleName,
-    Targets: newTargets
-  }).promise()
+  return events
+    .putTargets({
+      Rule: ruleName,
+      Targets: newTargets,
+    }).promise()
 }
 
 const setRuleCronString = (ruleName: string, cronString: string) => () => {
-  return eventer.putRule({
-    Name: ruleName,
-    ScheduleExpression: `cron(${cronString})`
-  }).promise()
+  return events
+    .putRule({
+      Name: ruleName,
+      ScheduleExpression: `cron(${cronString})`,
+    }).promise()
 }
 
 export {

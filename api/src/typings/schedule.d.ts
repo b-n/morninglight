@@ -1,5 +1,4 @@
-interface Schedule {
-  id: string
+interface NewSchedule {
   action: string
   cron: string
   data: {
@@ -11,6 +10,10 @@ interface Schedule {
   tz: string
 }
 
-declare enum ScheduleActionType {
+interface Schedule extends NewSchedule {
+  id: string
+}
+
+declare const enum ScheduleActionType {
   particle = 'PARTICLE'
 }

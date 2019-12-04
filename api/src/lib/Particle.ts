@@ -17,12 +17,14 @@ class Particle {
     this.apiKey = process.env.PHOTON_API_KEY!
   }
 
-  async runAction(action: string, data: ParticleRequest) {
-    if (action == 'TEMP_ANIMATE') return this.animateTemp(data)
-    return Promise.reject('No such action type')
+  public async runAction(action: string, data: ParticleRequest) {
+    if (action === 'TEMP_ANIMATE') {
+      return this.animateTemp(data)
+    }
+    return Promise.reject(new Error('No such action type'))
   }
 
-  async animateTemp(data: ParticleRequest) {
+  public async animateTemp(data: ParticleRequest) {
     const {
       deviceId,
       duration,
@@ -30,24 +32,24 @@ class Particle {
       endTemp,
       startIntensity,
       endIntensity,
-      totalDuration
+      totalDuration,
     } = data
 
-    const body = `args=1,${startTemp},${startIntensity},${endTemp},${endIntensity},${duration*1000},${totalDuration*1000}`
+    const body = `args=1,${startTemp},${startIntensity},${endTemp},${endIntensity},${duration * 1000},${totalDuration * 1000}`
 
     return fetch(
       `https://api.particle.io/v1/devices/${deviceId}/animateLight`,
       {
-        method: "POST",
+        body,
         headers: {
-          "Authorization": `Bearer ${this.apiKey}`,
-          "Content-Type": "application/x-www-form-urlencoded"
+          Authorization: `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body
+        method: 'POST',
       }
     )
-    .then(response => response.json())
-    .catch(err => err)
+      .then((response) => response.json())
+      .catch((err) => err)
   }
 }
 

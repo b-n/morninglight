@@ -5,6 +5,8 @@
   "license": "MIT",
   "sideEffects": false,
   "scripts": {
+    "lint": "eslint --ext=ts src",
+    "test-dev": "jest --verbose --coverage --watch",
     "test": "jest"
   },
   "devDependencies": {
@@ -16,14 +18,22 @@
     "@types/node": "^12.7.7",
     "@types/node-fetch": "^2.5.2",
     "@types/uuid": "^3.4.5",
+    "@typescript-eslint/eslint-plugin": "^2.10.0",
+    "@typescript-eslint/parser": "^2.10.0",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-source-map-support": "^2.0.1",
+    "eslint": "^6.7.2",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.9.0",
     "serverless-webpack": "^5.3.1",
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.1.2",
-    "tslint": "^5.20.0",
     "typescript": "^3.6.3",
     "webpack": "^4.39.3",
     "webpack-node-externals": "^1.7.2"

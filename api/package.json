@@ -20,7 +20,7 @@
     "aws-sdk": "^2.340.0",
     "cron-parser": "^2.6.0",
     "date-fns": "^2.0.0-alpha.24",
-    "node-fetch": "^2.2.0",
+    "node-fetch": "^2.6.1",
     "source-map-support": "^0.5.9",
     "uuid": "^3.3.2"
   }
